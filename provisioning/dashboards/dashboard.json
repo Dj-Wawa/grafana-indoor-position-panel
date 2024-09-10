@@ -24,8 +24,9 @@
   "panels": [
     {
       "datasource": {
-        "type": "grafana",
-        "uid": "grafana"
+        "default": true,
+        "uid": "trlxrdZVk",
+        "type": "grafana-testdata-datasource"
       },
       "gridPos": {
         "h": 8,
@@ -35,49 +36,26 @@
       },
       "id": 1,
       "options": {
+        "imageUrl": "https://transfer.archivete.am/d8aNz/MFC2.png",
         "seriesCountSize": "sm",
         "showSeriesCount": false,
-        "text": "Default value of text input option"
+        "text": "Default value of text input option",
+        "topLeftLat": 53.835373,
+        "topLeftLong": 10.695933,
+        "bottomRightLat": 53.834278,
+        "bottomRightLong": 10.699514,
+        "destLat": 53.83488,
+        "destLong": 10.697781
       },
       "targets": [
         {
-          "datasource": {
-            "type": "datasource",
-            "uid": "grafana"
-          },
-          "queryType": "randomWalk",
-          "refId": "A"
-        }
-      ],
-      "title": "Panel Title",
-      "type": "o5g-indoorposition-panel"
-    },
-    {
-      "datasource": {
-        "type": "grafana-testdata-datasource",
-        "uid": "trlxrdZVk"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "seriesCountSize": "sm",
-        "showSeriesCount": false,
-        "text": "Default value of text input option"
-      },
-      "targets": [
-        {
-          "alias": "",
+          "scenarioId": "csv_content",
+          "refId": "A",
           "datasource": {
             "type": "grafana-testdata-datasource",
-            "uid": "db84e60d-b92a-4089-82cb-34842fb1754b"
+            "uid": "trlxrdZVk"
           },
-          "refId": "A",
-          "scenarioId": "no_data_points"
+          "csvContent": "time, Lat, Long\r\n1724925249, 53.834744, 10.696904\r\n1724925250, 53.834428, 10.697698\r\n1724925251, 53.834562, 10.698594"
         }
       ],
       "title": "Panel Title",

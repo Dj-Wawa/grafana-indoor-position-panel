@@ -5,36 +5,38 @@ import { SimplePanel } from './components/SimplePanel';
 export const plugin = new PanelPlugin<SimpleOptions>(SimplePanel).setPanelOptions((builder) => {
   return builder
     .addTextInput({
-      path: 'text',
-      name: 'Simple text option',
-      description: 'Description of panel option',
-      defaultValue: 'Default value of text input option',
+      path: 'imageUrl',
+      name: 'Floorplan URL',
+      description: 'Full URL of floorplan (svg)'
     })
-    .addBooleanSwitch({
-      path: 'showSeriesCount',
-      name: 'Show series counter',
-      defaultValue: false,
-    })
-    .addRadio({
-      path: 'seriesCountSize',
-      defaultValue: 'sm',
-      name: 'Series counter size',
-      settings: {
-        options: [
-          {
-            value: 'sm',
-            label: 'Small',
-          },
-          {
-            value: 'md',
-            label: 'Medium',
-          },
-          {
-            value: 'lg',
-            label: 'Large',
-          },
-        ],
-      },
-      showIf: (config) => config.showSeriesCount,
-    });
+      .addNumberInput({
+          path: 'topLeftLat',
+          name: 'Top Left Latitude',
+          description: 'Latitude of the Top Left image corner'
+      })
+      .addNumberInput({
+          path: 'topLeftLong',
+          name: 'Top Left Longitude',
+          description: 'Longitude of the Top Left image corner'
+      })
+      .addNumberInput({
+          path: 'bottomRightLat',
+          name: 'Bottom Right Latitude',
+          description: 'Longitude of the Bottom Right image corner'
+      })
+      .addNumberInput({
+          path: 'bottomRightLong',
+          name: 'Bottom Right Longitude',
+          description: 'Longitude of the Bottom Right image corner'
+      })
+      .addNumberInput({
+          path: 'destLat',
+          name: 'Destination Latitude',
+          description: 'Latitude of the Destination'
+      })
+      .addNumberInput({
+          path: 'destLong',
+          name: 'Destination Longitude',
+          description: 'Longitude of the Destination'
+      })
 });

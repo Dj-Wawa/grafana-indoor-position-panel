@@ -1,7 +1,9 @@
-type SeriesSize = 'sm' | 'md' | 'lg';
-
 export interface SimpleOptions {
-  text: string;
-  showSeriesCount: boolean;
-  seriesCountSize: SeriesSize;
+  imageUrl: string
+  topLeftLat: number
+  topLeftLong: number
+  bottomRightLat: number
+  bottomRightLong: number
+  destLat: number
+  destLong: number
 }
