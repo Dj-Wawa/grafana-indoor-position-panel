@@ -1,6 +1,6 @@
-import React, {useRef, useEffect, useMemo} from 'react';
-import { PanelProps } from '@grafana/data';
-import { SimpleOptions } from 'types';
+import React, {useEffect, useMemo, useRef} from 'react';
+import {PanelProps} from '@grafana/data';
+import {SimpleOptions} from 'types';
 
 interface Props extends PanelProps<SimpleOptions> {}
 
@@ -10,15 +10,14 @@ interface Coordinate {
 }
 
 function scale (number: number, inMin: number, inMax: number, outMin: number, outMax: number): number {
-  const result = (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-  //console.log('[' + inMin + ', ' + inMax + '] -> [' + outMin + ', ' + outMax + '] => ' + number + ' -> ' + result);
-  return result;
+    //console.log('[' + inMin + ', ' + inMax + '] -> [' + outMin + ', ' + outMax + '] => ' + number + ' -> ' + result);
+  return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
 }
 
 export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fieldConfig, id }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Memoize the coordinates array to avoid recomputation on every render
+  // Memoize the coordinate array to avoid recomputation on every render
   const coordinates: Coordinate[] = useMemo(() => {
     const coords: Coordinate[] = [];
 
@@ -29,8 +28,8 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
 
       if (xField && yField) {
         for (let i = 0; i < xField.values.length; i++) {
-          const x = xField.values.get(i) as number;
-          const y = yField.values.get(i) as number;
+          const x = xField.values[i] as number;
+          const y = yField.values[i] as number;
           coords.push({ x, y });
         }
       }
