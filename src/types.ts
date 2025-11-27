@@ -1,9 +1,33 @@
 export interface SimpleOptions {
   imageUrl: string
-  topLeftLat: number
+  coordinates:{
+    topLeft:{
+      lat: number
+      long: number
+    }
+    bottomLeft:{
+      lat: number
+      long: number
+    }
+    topRight:{
+      lat: number
+      long: number
+    }
+  }
+  /*topLeftLat: number
   topLeftLong: number
+  topRightLat: number
+  topRightLong: number
   bottomRightLat: number
-  bottomRightLong: number
-  destLat: number
+  bottomRightLong: number*/
+  minElevation: number
+  maxElevation: number
+  destination:{
+    lat: number
+    long: number
+    elevation: number
+  }
+  /*destLat: number
   destLong: number
+  destElevation: number*/
 }

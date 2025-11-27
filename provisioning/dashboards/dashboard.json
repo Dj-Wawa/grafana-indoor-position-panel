@@ -25,8 +25,8 @@
     {
       "datasource": {
         "default": true,
-        "uid": "trlxrdZVk",
-        "type": "grafana-testdata-datasource"
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
       },
       "gridPos": {
         "h": 8,
@@ -36,26 +36,41 @@
       },
       "id": 1,
       "options": {
+        "destination": {
+          "elevation": 0,
+          "lat": 53.83488,
+          "long": 10.697781
+        },
         "imageUrl": "https://transfer.archivete.am/d8aNz/MFC2.png",
+        "maxElevation": 3,
+        "minElevation": 0,
         "seriesCountSize": "sm",
         "showSeriesCount": false,
         "text": "Default value of text input option",
-        "topLeftLat": 53.835373,
-        "topLeftLong": 10.695933,
-        "bottomRightLat": 53.834278,
-        "bottomRightLong": 10.699514,
-        "destLat": 53.83488,
-        "destLong": 10.697781
+        "coordinates": {
+          "topRight": {
+            "lat": 53.835373,
+            "long": 10.699514
+          },
+          "topLeft": {
+            "lat": 53.835373,
+            "long": 10.695933
+          },
+          "bottomLeft": {
+            "lat": 53.834278,
+            "long": 10.695933
+          }
+        }
       },
       "targets": [
         {
-          "scenarioId": "csv_content",
-          "refId": "A",
+          "csvContent": "time, Lat, Long, Elv\r\n1724925249, 53.834744, 10.696904, 1\r\n1724925250, 53.834428, 10.697698, 1.5\r\n1724925251, 53.834562, 10.698594, 1.5",
           "datasource": {
             "type": "grafana-testdata-datasource",
             "uid": "trlxrdZVk"
           },
-          "csvContent": "time, Lat, Long\r\n1724925249, 53.834744, 10.696904\r\n1724925250, 53.834428, 10.697698\r\n1724925251, 53.834562, 10.698594"
+          "refId": "A",
+          "scenarioId": "csv_content"
         }
       ],
       "title": "Panel Title",
