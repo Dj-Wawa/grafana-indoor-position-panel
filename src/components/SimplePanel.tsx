@@ -41,7 +41,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
   // useEffect to draw the image and the points
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas?.getContext('2d');
+    const context = canvas ? canvas.getContext('2d') : undefined;
 
     // Early return if there is nothing to draw
     if (!context || coordinates.length === 0) {
@@ -71,7 +71,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
       // Rectangle coordinates
       let result_x = u * width + offsetX;
       let result_y = v * height + offsetY;
-      let draw = z <= options.maxElevation && z >= options.minElevation;
+      let draw = z < options.maxElevation && z >= options.minElevation;
       //let draw = true;
 
       console.log(x, y, result_x, result_y)
@@ -104,9 +104,6 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
     }
 
     const renderScene = () => {
-
-
-
       // Clear and draw background
       context.clearRect(0, 0, width, height);
 
@@ -147,13 +144,22 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
       // Draw the path to exit (dashed)
       const lastPoint = points[points.length - 1];
       const destPoint = toCanvasPoint(options.destination.long, options.destination.lat, options.destination.elevation, drawWidth, drawHeight, offsetX, offsetY);
-
-      context.beginPath();
-      context.moveTo(lastPoint.x, lastPoint.y);
-      context.lineTo(destPoint.x, destPoint.y);
-      context.lineWidth = 2;
-      context.setLineDash([10, 5]);
-      context.stroke();
+      if (lastPoint.draw && destPoint.draw){
+        context.beginPath();
+        context.moveTo(lastPoint.x, lastPoint.y);
+        context.lineTo(destPoint.x, destPoint.y);
+        context.lineWidth = 2;
+        context.strokeStyle = 'green';
+        context.setLineDash([10, 5]);
+        context.stroke();
+      }
+      // Draw the destination point
+      if (destPoint.draw){
+        context.beginPath();
+        context.arc(destPoint.x, destPoint.y, 5, 0, 2 * Math.PI);
+        context.fillStyle = 'green';
+        context.fill();
+      }
 
       // Plot the points on the image
       points.forEach((p, index) => {
