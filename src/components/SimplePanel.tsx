@@ -11,7 +11,7 @@ interface Coordinate {
 }
 
 export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fieldConfig, id }) => {
-  const canvasRef = useRef<HTMLCanvasElement>();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   console.log(width, height)
 
   // Memoize the coordinate array to avoid recomputation on every render
@@ -74,7 +74,9 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
       let draw = z < options.maxElevation && z >= options.minElevation;
       //let draw = true;
 
-      console.log(x, y, result_x, result_y)
+      if (process.env.NODE_ENV === 'development') {
+        console.log(x, y, result_x, result_y)
+      }
 
       return {x: result_x, y: result_y, draw: draw};
     }
@@ -112,18 +114,19 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
       // Draw background image with aspect ratio preserved
       context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 
-      console.log('Top Left: ' + toCanvasPoint(options.coordinates.topLeft.long, options.coordinates.topLeft.lat, 0, drawWidth, drawHeight, offsetX, offsetY))
-      console.log('Top Right: ' + toCanvasPoint(options.coordinates.topRight.long, options.coordinates.topRight.lat, 0, drawWidth, drawHeight, offsetX, offsetY))
-      console.log('Bottom Left: ' + toCanvasPoint(options.coordinates.bottomLeft.long, options.coordinates.bottomLeft.lat, 0, drawWidth, drawHeight, offsetX, offsetY))
-      console.log('Destination: ' + toCanvasPoint(options.destination.long, options.destination.lat, options.destination.elevation, drawWidth, drawHeight, offsetX, offsetY))
-
+      if (process.env.NODE_ENV === 'development'){
+        console.log('Top Left: ', toCanvasPoint(options.coordinates.topLeft.long, options.coordinates.topLeft.lat, 0, drawWidth, drawHeight, offsetX, offsetY))
+        console.log('Top Right: ', toCanvasPoint(options.coordinates.topRight.long, options.coordinates.topRight.lat, 0, drawWidth, drawHeight, offsetX, offsetY))
+        console.log('Bottom Left: ', toCanvasPoint(options.coordinates.bottomLeft.long, options.coordinates.bottomLeft.lat, 0, drawWidth, drawHeight, offsetX, offsetY))
+        console.log('Destination: ', toCanvasPoint(options.destination.long, options.destination.lat, options.destination.elevation, drawWidth, drawHeight, offsetX, offsetY))
+      }
       // Pre-calculate canvas points
       const points = coordinates.map((c) => toCanvasPoint(c.x, c.y, c.z, drawWidth, drawHeight, offsetX, offsetY));
 
       // Draw the path between points
       context.beginPath();
       let lastPointDrawn = false;
-      points.forEach((p, i) => {
+      points.forEach((p) => {
         if (p.draw){
           if (lastPointDrawn) {
             context.lineTo(p.x, p.y);
@@ -176,7 +179,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
     const img = new Image();
     img.src = options.imageUrl;
     img.onload = renderScene;
-  }, [options.imageUrl, coordinates, width, height]); // Coordinates will only trigger the effect if they actually change
+  }, [options, coordinates, width, height]); // Coordinates will only trigger the effect if they actually change
 
   return (
       <div style={{ width, height, position: 'relative' }}>
