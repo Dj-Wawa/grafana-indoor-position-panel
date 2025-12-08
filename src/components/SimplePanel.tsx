@@ -10,14 +10,8 @@ interface Coordinate {
   z: number;
 }
 
-function scale (number: number, inMin: number, inMax: number, outMin: number, outMax: number): number {
-  const result = (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-  console.log('[' + inMin + ', ' + inMax + '] -> [' + outMin + ', ' + outMax + '] => ' + number + ' -> ' + result);
-  return result
-}
-
 export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fieldConfig, id }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>();
   console.log(width, height)
 
   // Memoize the coordinate array to avoid recomputation on every render
@@ -55,16 +49,14 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
     }
 
     // Encapsulate scaling logic to avoid repetition
-    const toCanvasPoint = (x: number, y: number, z: number) => {
-      /*x: scale(x, options.coordinates.topLeft.long, options.coordinates.bottomRight.long, 0, width),
-      y: scale(y, options.coordinates.topLeft.lat, options.coordinates.bottomRight.lat, 0, height),*/
+    const toCanvasPoint = (x: number, y: number, z: number, width: number, height: number, offsetX: number, offsetY: number) => {
 
       const A = options.coordinates.topLeft;
       const B = options.coordinates.topRight;
       const C = options.coordinates.bottomLeft;
 
       const v1 = {x: B.long - A.long, y: B.lat - A.lat};
-      const v2 = {x: C.long - A.long, y: C.long - A.lat};
+      const v2 = {x: C.long - A.long, y: C.lat - A.lat};
       const w = {x: x - A.long, y: y - A.lat};
 
       const det = v1.x * v2.y - v2.x * v1.y;
@@ -77,24 +69,59 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
       const v = (v1.x * w.y - w.x * v1.y) / det;
 
       // Rectangle coordinates
-      let result_x = u * width;
-      let result_y = v * height;
+      let result_x = u * width + offsetX;
+      let result_y = v * height + offsetY;
       let draw = z <= options.maxElevation && z >= options.minElevation;
+      //let draw = true;
 
       console.log(x, y, result_x, result_y)
 
-      return {x, y, draw};
+      return {x: result_x, y: result_y, draw: draw};
     }
 
 
+    function calculateImageDimensions() {
+      // Calculate dimensions to maintain aspect ratio
+      const imgAspectRatio = img.width / img.height;
+      const canvasAspectRatio = width / height;
+
+      let drawWidth, drawHeight, offsetX, offsetY;
+
+      if (imgAspectRatio > canvasAspectRatio) {
+        // Image is wider than canvas - fit to width
+        drawWidth = width;
+        drawHeight = width / imgAspectRatio;
+        offsetX = 0;
+        offsetY = (height - drawHeight) / 2;
+      } else {
+        // Image is taller than canvas - fit to height
+        drawHeight = height;
+        drawWidth = height * imgAspectRatio;
+        offsetX = (width - drawWidth) / 2;
+        offsetY = 0;
+      }
+      return {drawWidth, drawHeight, offsetX, offsetY};
+    }
 
     const renderScene = () => {
+
+
+
       // Clear and draw background
       context.clearRect(0, 0, width, height);
-      context.drawImage(img, 0, 0, width, height);
+
+      let {drawWidth, drawHeight, offsetX, offsetY} = calculateImageDimensions();
+
+      // Draw background image with aspect ratio preserved
+      context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+
+      console.log('Top Left: ' + toCanvasPoint(options.coordinates.topLeft.long, options.coordinates.topLeft.lat, 0, drawWidth, drawHeight, offsetX, offsetY))
+      console.log('Top Right: ' + toCanvasPoint(options.coordinates.topRight.long, options.coordinates.topRight.lat, 0, drawWidth, drawHeight, offsetX, offsetY))
+      console.log('Bottom Left: ' + toCanvasPoint(options.coordinates.bottomLeft.long, options.coordinates.bottomLeft.lat, 0, drawWidth, drawHeight, offsetX, offsetY))
+      console.log('Destination: ' + toCanvasPoint(options.destination.long, options.destination.lat, options.destination.elevation, drawWidth, drawHeight, offsetX, offsetY))
 
       // Pre-calculate canvas points
-      const points = coordinates.map((c) => toCanvasPoint(c.x, c.y, c.z));
+      const points = coordinates.map((c) => toCanvasPoint(c.x, c.y, c.z, drawWidth, drawHeight, offsetX, offsetY));
 
       // Draw the path between points
       context.beginPath();
@@ -119,7 +146,7 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
 
       // Draw the path to exit (dashed)
       const lastPoint = points[points.length - 1];
-      const destPoint = toCanvasPoint(options.destination.long, options.destination.lat, options.destination.elevation);
+      const destPoint = toCanvasPoint(options.destination.long, options.destination.lat, options.destination.elevation, drawWidth, drawHeight, offsetX, offsetY);
 
       context.beginPath();
       context.moveTo(lastPoint.x, lastPoint.y);
