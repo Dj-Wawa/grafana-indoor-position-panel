@@ -72,7 +72,6 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
       let result_x = u * width + offsetX;
       let result_y = v * height + offsetY;
       let draw = z < options.maxElevation && z >= options.minElevation;
-      //let draw = true;
 
       if (process.env.NODE_ENV === 'development') {
         console.log(x, y, result_x, result_y)

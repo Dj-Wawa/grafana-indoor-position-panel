@@ -1,133 +1,39 @@
-# Grafana panel plugin template
+# Grafana Indoor Position Panel
 
-This template is a starting point for building a panel plugin for Grafana.
+A Grafana plugin for displaying indoor position data.
 
-## What are Grafana panel plugins?
+## Installation
 
-Panel plugins allow you to add new types of visualizations to your dashboard, such as maps, clocks, pie charts, lists, and more.
+### Pre-packaged plugin
+Download the latest o5g-indoorpsition-panel-x.x.x.zip from the 
+[releases page](https://github.com/Dj-Wawa/grafana-indoor-position-panel/releases) and unzip the contents into your 
+Grafana plugins directory (default: `/var/lib/grafana/plugins/`). For more information visit the 
+[Grafana documentation](https://grafana.com/docs/grafana/latest/administration/plugin-management/plugin-install/#install-a-plugin-from-a-zip-file).
 
-Use panel plugins when you want to do things like visualize data returned by data source queries, navigate between dashboards, or control external systems (such as smart home devices).
+Restart the Grafana server.
 
-## Getting started
+### Build from source
+Clone the repository and run `npm install` and `npm run build`. 
+Then copy the contents of the `dist` folder into your Grafana plugins directory and restart Grafana.  
+This repo also contains a docker image for easy development. To use it, run `npm install`, `npm run build` and `npm run server`.
 
-### Frontend
+## Usage
 
-1. Install dependencies
+### Configuration
+The panel requires an image of a floor plan (or any other map) hosted on any url accessible by the users' browser.  
+For buildings with multiple floors, use a separate panel with a different floor plan image for each floor.  
+To position data points on the plan you also need to specify the coordinates for the Top Left, Top Right and Bottom Left 
+corner of the plan image as well as the minimum (floor) and maximum (ceiling) elevation of the floor in this panel.
+To draw a marker for the exit and a line from the most recent position to the exit, also specify the coordinates and elevation of the exit.
 
-   ```bash
-   npm install
-   ```
+### Required data
+The plugin expects the following data in the query response:
+- `lat` (float)
+- `lon` (float)
+- `elv` (float)
 
-2. Build plugin in development mode and run in watch mode
+Data points need to contain all three fields to be displayed.
 
-   ```bash
-   npm run dev
-   ```
-
-3. Build plugin in production mode
-
-   ```bash
-   npm run build
-   ```
-
-4. Run the tests (using Jest)
-
-   ```bash
-   # Runs the tests and watches for changes, requires git init first
-   npm run test
-
-   # Exits after running all the tests
-   npm run test:ci
-   ```
-
-5. Spin up a Grafana instance and run the plugin inside it (using Docker)
-
-   ```bash
-   npm run server
-   ```
-
-6. Run the E2E tests (using Cypress)
-
-   ```bash
-   # Spins up a Grafana instance first that we tests against
-   npm run server
-
-   # Starts the tests
-   npm run e2e
-   ```
-
-7. Run the linter
-
-   ```bash
-   npm run lint
-
-   # or
-
-   npm run lint:fix
-   ```
-
-# Distributing your plugin
-
-When distributing a Grafana plugin either within the community or privately the plugin must be signed so the Grafana application can verify its authenticity. This can be done with the `@grafana/sign-plugin` package.
-
-_Note: It's not necessary to sign a plugin during development. The docker development environment that is scaffolded with `@grafana/create-plugin` caters for running the plugin without a signature._
-
-## Initial steps
-
-Before signing a plugin please read the Grafana [plugin publishing and signing criteria](https://grafana.com/legal/plugins/#plugin-publishing-and-signing-criteria) documentation carefully.
-
-`@grafana/create-plugin` has added the necessary commands and workflows to make signing and distributing a plugin via the grafana plugins catalog as straightforward as possible.
-
-Before signing a plugin for the first time please consult the Grafana [plugin signature levels](https://grafana.com/legal/plugins/#what-are-the-different-classifications-of-plugins) documentation to understand the differences between the types of signature level.
-
-1. Create a [Grafana Cloud account](https://grafana.com/signup).
-2. Make sure that the first part of the plugin ID matches the slug of your Grafana Cloud account.
-   - _You can find the plugin ID in the `plugin.json` file inside your plugin directory. For example, if your account slug is `acmecorp`, you need to prefix the plugin ID with `acmecorp-`._
-3. Create a Grafana Cloud API key with the `PluginPublisher` role.
-4. Keep a record of this API key as it will be required for signing a plugin
-
-## Signing a plugin
-
-### Using Github actions release workflow
-
-If the plugin is using the github actions supplied with `@grafana/create-plugin` signing a plugin is included out of the box. The [release workflow](./.github/workflows/release.yml) can prepare everything to make submitting your plugin to Grafana as easy as possible. Before being able to sign the plugin however a secret needs adding to the Github repository.
-
-1. Please navigate to "settings > secrets > actions" within your repo to create secrets.
-2. Click "New repository secret"
-3. Name the secret "GRAFANA_API_KEY"
-4. Paste your Grafana Cloud API key in the Secret field
-5. Click "Add secret"
-
-#### Push a version tag
-
-To trigger the workflow we need to push a version tag to github. This can be achieved with the following steps:
-
-1. Run `npm version <major|minor|patch>`
-2. Run `git push origin main --follow-tags`
-
-## Learn more
-
-Below you can find source code for existing app plugins and other related documentation.
-
-- [Basic panel plugin example](https://github.com/grafana/grafana-plugin-examples/tree/master/examples/panel-basic#readme)
-- [`plugin.json` documentation](https://grafana.com/developers/plugin-tools/reference/plugin-json)
-- [How to sign a plugin?](https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin)
-
-
-
-# Congratulations on scaffolding a Grafana panel plugin! 🚀
-
-## What's next?
-
-Run the following commands to get started:
-
-    * cd ./o5g-indoorposition-panel
-    * npm install to install frontend dependencies.
-    * npm exec playwright install chromium to install e2e test dependencies.
-    * npm run dev to build (and watch) the plugin frontend code.
-    * docker compose up to start a grafana development server.
-    * Open http://localhost:3000 in your browser to create a dashboard to begin developing your plugin.
-
-Note: We strongly recommend creating a new Git repository by running git init in ./o5g-indoorposition-panel before continuing.
-
-    * Learn more about Grafana Plugin Development at https://grafana.com/developers/plugin-tools
+## Development
+This plugin is based on the grafana panel plugin template. Information on how to use it can be found in [DEVELOPMENT.md](./DEVELOPMENT.md). 
+All new or modified source code is in the `src` folder. 
